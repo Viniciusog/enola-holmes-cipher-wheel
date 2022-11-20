@@ -1,0 +1,125 @@
+body, html {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(245, 245, 245, 0.808);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;    
+}
+
+#author {
+    width: 100%;
+    margin-top: 10px;
+    color: rgba(0, 0, 0, 0.377);
+    text-align: center;
+}
+
+.main-div {
+    display: flex;
+    margin-top: 10px;
+    border: 1px solid white;
+    border-radius: 8px;
+    flex-direction: column;
+    width: min(600px, 90vh);
+    background: rgb(156, 74, 74);
+    height: fit-content;
+    padding: 10px 20px 10px 20px;
+}
+
+#title {
+    color: white;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: large;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+#encode-div {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    background-color: whitesmoke;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 3px;
+}
+
+#decode-div {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    background-color: whitesmoke;
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.index-keyword-div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.message-result-div {
+    width: 100%;
+}
+
+input {
+    width: 100%;
+    padding: 5px;
+    margin-top: 2px;
+    margin-bottom: 5px;
+    outline: 0;
+}
+
+button {
+    padding: 5px;
+    margin-top: 5px;
+    font-size: medium;
+    border: 1px solid rgb(167, 112, 112);
+    border-radius: 6px;
+    box-shadow: 0px 0px 2px rgb(155, 154, 154);
+    width: 100px;
+}
+
+button:hover {
+    color: white;
+    outline: 0;
+    background-color: rgb(167, 112, 112);
+    transition: 0.2s ease;
+}
+
+label {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.div-result-shuffle {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.input-result {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 100%;
+    margin-right: 10px;
+}
+
+.div-result-shuffle button {
+    margin-top: 0px;
+    padding:0px;
+    width: fit-content;
+    font: small;
+}
