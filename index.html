@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image"  content="http://static01.nyt.com/images/2015/02/19/arts/international/19iht-btnumbers19A/19iht-btnumbers19A-facebookJumbo-v2.jpg" />
     <title>Document</title>
 </head>
 <body>
@@ -21,7 +22,7 @@
                 <label>Message</label>
                 <input id="ie-message" type="text" placeholder="E.g: Hello"/>
                 <label>Encoded message</label>
-                <input id="ie-result" type="text" placeholder="" disabled/>
+                <input class="input-result" id="ie-result" type="text" placeholder="" disabled/>
             </div>
             <div class="button-div">
                 <button id="button-e" onclick="onEncode()">Encode</button>
@@ -39,7 +40,11 @@
                 <label>Encoded message</label>
                 <input id="id-message" type="text" placeholder=""/>
                 <label>Decoded message</label>
-                <input id="id-result" type="text" placeholder="" disabled/>
+                <div class="div-result-shuffle">
+                    <input class="input-result" id="id-result" type="text" placeholder="" disabled/>
+                    <button onclick="onShuffleD()"><img  src="./shuffle.svg" width="25px" height="25px"/></button>
+                </div>
+                
             </div>
             <div class="button-div">
                 <button id="button-d" onclick="onDecode()">Decode</button>
@@ -145,6 +150,27 @@
     label {
         font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     }
+
+    .div-result-shuffle {
+        display: flex;
+        align-content: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .input-result {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        width: 100%;
+        margin-right: 10px;
+    }
+
+    .div-result-shuffle button {
+        margin-top: 0px;
+        padding:0px;
+        width: fit-content;
+        font: small;
+    }
 </style>
 <script>
 
@@ -166,7 +192,6 @@
     var outerWheel = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'
     ,'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'A', 'B'];
     let c = 'C';
-    let asciiC = c.charCodeAt(0);
 
     // Array das letras codificadas
     var innerWheel = [];    
@@ -180,15 +205,116 @@
     }
     
     let encodedMessage = [];
-    let arrayMessage = [];
-    let arrayKeyword = [];
 
     function onEncode() {
-
         var message = inputMessageE.value.toUpperCase();
         let index = inputIndexE.value.toUpperCase();
         let keyword = inputKeywordE.value.toUpperCase();
 
+        let arrayMessage = [];
+        let arrayKeyword = [];
+
+        generateArrayMessageAndKeyword(message, keyword, arrayMessage, arrayKeyword);
+
+        /* CODIFICAÇÃO DA MENSAGEM */
+        let ascii1 = index.charCodeAt(0);
+        // Agora vamos ter que realizar a conversão utilizando o index e a keyword
+        for (let i = 0; i < arrayKeyword.length; i++) {
+            /* Realiza a rotação da "roda" interna */
+            rotation(index, arrayKeyword[i]);
+            console.log("inner wheel\n");
+            for (let k = 0; k < innerWheel.length; k++) {
+                console.log(innerWheel[k]);
+            }
+
+            /* Realiza a conversão da mensagem para os caracteres codificados */
+            // queremos saber em qual posição do array está esse char da mensagem
+            // Para isso, vamos pegar o valor ascii do primeiro char (posição 0) e também o valor ascii do char da mensagem
+            // Assim, saberemos a diferença de posições entre o primeiro elemento do array e o char que estamos procurando.
+            let asciiCharMsg = arrayMessage[i].charCodeAt(0);
+            let asciiOuter0 = outerWheel[0].charCodeAt(0);
+            let diffAscii = asciiCharMsg - asciiOuter0;
+
+            let position = diffAscii;
+            if (diffAscii < 0) {
+                position = 25 + (diffAscii + 1);
+            }
+            let codedChar = innerWheel[position].letter;
+            encodedMessage[i] = codedChar; 
+        }
+
+        // Precisamos do indexEncodedMessage pois o resultado dentro do vetor encodedMessage está sem espaços
+        // e queremos mostrar para o usuário a mensagem codificada com os espaços.
+        let stringEncoded = "";
+        let indexEncodedMessage = 0;
+        for (let i = 0; i < message.length; i++) {
+            if (message.charAt(i) != ' ') {
+                stringEncoded += encodedMessage[indexEncodedMessage];
+                indexEncodedMessage++;
+            } else {    
+                stringEncoded += ' ';
+            }
+        }
+        console.log("String encoded: " + stringEncoded);
+
+        inputResultE.value = stringEncoded.toLowerCase();
+    }
+
+    function onDecode() {
+        let message = inputMessageD.value.toUpperCase();
+        let keyword = inputKeywordD.value.toUpperCase();
+        let index = inputIndexD.value.toUpperCase();
+
+        let arrayKeyword = [];
+        let arrayMessage = [];
+
+        generateArrayMessageAndKeyword(message, keyword, arrayMessage, arrayKeyword);
+
+    console.log("After generate | message: " + message + ", keyword: " + keyword + ", index: " + index + ", arrayKeyword: ", arrayKeyword + ", arrayMessage: ", arrayMessage);
+        
+        /* REALIZAR A DECODIFICAÇÃO DA MENSAGEM */
+        let decodedMessage = [];
+        for (let i = 0; i < arrayMessage.length; i++) {
+            // Temos que realizar a rotação para o index e também o char respectivo da keyword
+            rotation(index, arrayKeyword[i]);
+
+            // Toda vez que realizar a rotação, precisamos saber qual letra está na posição 0 do array interno
+            // pois com isso iremos conseguir encontrar a posição da letra codificada, dentro do array interno.
+            // Sabendo a posição da letra codificada no array interno, basta pegar a letra na mesma posição 
+            // no array externo
+            let charPosition0 = innerWheel[0].letter;
+            let ascii1 = innerWheel[0].letter.charCodeAt(0);
+            let ascii2 = arrayMessage[i].charCodeAt(0);
+
+            let diff = ascii2 - ascii1;
+            let position = diff;
+            if (diff < 0) {
+                position = 25 + (diff + 1);
+            }
+            let decodedChar = outerWheel[position];
+            decodedMessage[i] = decodedChar;
+        }
+
+        console.log("Decoded message: ", decodedMessage);
+
+        let indexDecodedMsg = 0;
+        let decodedStringMsg = "";
+
+        for (let i = 0; i < message.length; i++) {
+            if (message.charAt(i) != ' ') {
+                decodedStringMsg += decodedMessage[indexDecodedMsg];
+                indexDecodedMsg++;
+            } else {
+                decodedStringMsg += " ";
+            }
+        }
+        inputResultD.value = decodedStringMsg;
+    }
+
+    // Mensagem normal
+    // Array contendo os caracteres da mensagem (Sem espaços)
+    // Array onde teremos a keyword
+    function generateArrayMessageAndKeyword(message, keyword, arrayMessage, arrayKeyword) {
         let currentIndexArrays = 0;
         let indexKeyword = 0;
 
@@ -205,81 +331,6 @@
                 }
             }
         }
-
-        /* CODIFICAÇÃO DA MENSAGEM */
-        let ascii1 = index.charCodeAt(0);
-        // Agora vamos ter que realizar a conversão utilizando o index e a keyword
-        for (let i = 0; i < arrayKeyword.length; i++) {
-            /* Realiza a rotação da "roda" interna */
-            rotation(index, arrayKeyword[i]);
-            console.log("inner wheel\n");
-            for (let k = 0; k < innerWheel.length; k++) {
-                console.log(innerWheel[k]);
-            }
-
-            /* Realiza a conversão da mensagem para os caracteres codificados */
-            // queremos saber em qual posição do array está esse char da mensagem
-            let asciiCharMsg = arrayMessage[i].charCodeAt(0);
-            let diffAscii = asciiCharMsg - asciiC;
-
-            let position = diffAscii;
-            if (diffAscii < 0) {
-                position = 25 + (diffAscii + 1);
-            }
-            let codedChar = innerWheel[position].letter;
-            encodedMessage[i] = codedChar; 
-        }
-
-        let stringEncoded = "";
-        for (let i = 0; i < encodedMessage.length; i++) {
-            stringEncoded += encodedMessage[i];
-        }
-        console.log("String encoded: " + stringEncoded);
-
-        inputResultE.value = stringEncoded.toLowerCase();
-    }
-
-    function onDecode() {
-        let message = inputMessageD.value.toUpperCase();
-        let index = inputIndexD.value.toUpperCase();
-        
-        /* REALIZAR A DECODIFICAÇÃO DA MENSAGEM */
-        let decodedMessage = [];
-        for (let i = 0; i < encodedMessage.length; i++) {
-            // Temos que realizar a rotação para o index e também o char respectivo da keyword
-            rotation(index, arrayKeyword[i]);
-
-            // Toda vez que realizar a rotação, precisamos saber qual letra está na posição 0 do array interno
-            // pois com isso iremos conseguir encontrar a posição da letra codificada, dentro do array interno.
-            // Sabendo a posição da letra codificada no array interno, basta pegar a letra na mesma posição 
-            // no array externo
-            let charPosition0 = innerWheel[0].letter;
-            let ascii1 = innerWheel[0].letter.charCodeAt(0);
-            let ascii2 = encodedMessage[i].charCodeAt(0);
-
-            let diff = ascii2 - ascii1;
-            let position = diff;
-            if (diff < 0) {
-                position = 25 + (diff + 1);
-            }
-            let decodedChar = outerWheel[position];
-            decodedMessage[i] = decodedChar;
-        }
-
-        let indexDecodedMsg = 0;
-        let decodedStringMsg = "";
-
-        let originalMessage = inputMessageE.value;
-        for (let i = 0; i < originalMessage.length; i++) {
-            if (originalMessage.charAt(i) != ' ') {
-                decodedStringMsg += decodedMessage[indexDecodedMsg];
-                indexDecodedMsg++;
-            } else {
-                decodedStringMsg += " ";
-            }
-        }
-        console.log("decoded string message: " + decodedStringMsg);
-        inputResultD.value = decodedStringMsg;
     }
 
     function rotation(char1, char2) {
@@ -302,6 +353,58 @@
             }
             innerWheel[nextPos] = obj;
         }
+    }
+
+    function onShuffleD() {
+        onShuffle(inputResultD);
+    }
+
+    function onShuffleE() {
+        onShuffle(inputResultE);
+    }
+
+    function onShuffle(inputResult) {
+        let message = inputResult.value;
+        console.log("onShuffle message: " + message);
+        inputResult.value = "";
+
+        let arrayWords = [];
+        let word = "";
+
+        for (let i = 0; i < message.length; i++) {
+            let charMsg = message.charAt(i);
+            if (charMsg != " ") {
+                word += charMsg;
+            } else if (word != "") {
+                arrayWords.push(word);
+                word = "";
+            }
+        }
+
+        // Como não tem caractere de espaço depois da última palavra, então iremos adicionar ela agora.
+        arrayWords.push(word);
+
+        console.log("on shuffle array word: ", arrayWords);
+
+        let resultArrayWords = [];
+
+        while (arrayWords.length > 0) {
+            let aleatoryIndex = Math.floor(Math.random() * arrayWords.length);
+            let aleatoryWord = arrayWords[aleatoryIndex];
+            console.log("Aleatory word: " + aleatoryWord);
+            arrayWords.splice(aleatoryIndex, 1);
+            resultArrayWords.push(aleatoryWord);
+        }
+
+        let stringResultShuffled = "";
+        for (let i = 0; i < resultArrayWords.length; i++) {
+            stringResultShuffled += resultArrayWords[i];
+            if (i < resultArrayWords.length - 1) {
+                stringResultShuffled += " ";
+            }
+        }
+
+        inputResult.value = stringResultShuffled;
     }
 
     function onInputIndex() {
