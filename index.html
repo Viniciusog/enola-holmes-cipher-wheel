@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image"  content="http://static01.nyt.com/images/2015/02/19/arts/international/19iht-btnumbers19A/19iht-btnumbers19A-facebookJumbo-v2.jpg" />
+    <meta property="og:image"  content="https://th.bing.com/th/id/R.016bbb3ab0df4bc8018d521a22cd0ed0?rik=yqOfx%2bLyfGwb7A&pid=ImgRaw&r=0" />
     <title>Document</title>
 </head>
 <body>
@@ -50,6 +50,7 @@
                 <button id="button-d" onclick="onDecode()">Decode</button>
             </div>
         </div>  
+        <label id="author">Vinícius Guimarães</label>
     </div>
 </body>
 <style>
@@ -69,6 +70,13 @@
         display: flex;
         justify-content: center;    
     }
+
+    #author {
+        width: 100%;
+        margin-top: 10px;
+        color: rgba(0, 0, 0, 0.377);
+        text-align: center;
+    }
     
     .main-div {
         display: flex;
@@ -79,7 +87,7 @@
         width: min(600px, 90vh);
         background: rgb(156, 74, 74);
         height: fit-content;
-        padding: 10px 20px 20px 20px;
+        padding: 10px 20px 10px 20px;
     }
 
     #title {
@@ -206,17 +214,25 @@
     
     let encodedMessage = [];
 
+    /**
+     * CODIFICAÇÃO DA MENSAGEM
+     */
     function onEncode() {
         var message = inputMessageE.value.toUpperCase();
         let index = inputIndexE.value.toUpperCase();
         let keyword = inputKeywordE.value.toUpperCase();
+
+        let valid = 1;
+        verification(index, keyword, message, valid);
+        if (!valid) {
+            return;
+        }
 
         let arrayMessage = [];
         let arrayKeyword = [];
 
         generateArrayMessageAndKeyword(message, keyword, arrayMessage, arrayKeyword);
 
-        /* CODIFICAÇÃO DA MENSAGEM */
         let ascii1 = index.charCodeAt(0);
         // Agora vamos ter que realizar a conversão utilizando o index e a keyword
         for (let i = 0; i < arrayKeyword.length; i++) {
@@ -260,19 +276,25 @@
         inputResultE.value = stringEncoded.toLowerCase();
     }
 
+    /**
+     * DECODIFICAÇÃO DA MENSAGEM
+     */
     function onDecode() {
         let message = inputMessageD.value.toUpperCase();
         let keyword = inputKeywordD.value.toUpperCase();
         let index = inputIndexD.value.toUpperCase();
+
+        let valid = 1;
+        verification(index, keyword, message, valid);
+        if (!valid) {
+            return;
+        }
 
         let arrayKeyword = [];
         let arrayMessage = [];
 
         generateArrayMessageAndKeyword(message, keyword, arrayMessage, arrayKeyword);
 
-    console.log("After generate | message: " + message + ", keyword: " + keyword + ", index: " + index + ", arrayKeyword: ", arrayKeyword + ", arrayMessage: ", arrayMessage);
-        
-        /* REALIZAR A DECODIFICAÇÃO DA MENSAGEM */
         let decodedMessage = [];
         for (let i = 0; i < arrayMessage.length; i++) {
             // Temos que realizar a rotação para o index e também o char respectivo da keyword
@@ -311,9 +333,9 @@
         inputResultD.value = decodedStringMsg;
     }
 
-    // Mensagem normal
-    // Array contendo os caracteres da mensagem (Sem espaços)
-    // Array onde teremos a keyword
+    /**
+     * A partir de uma mensagem normal e uma keyword, gera o array da mensagem e também o array de keyword
+     */
     function generateArrayMessageAndKeyword(message, keyword, arrayMessage, arrayKeyword) {
         let currentIndexArrays = 0;
         let indexKeyword = 0;
@@ -333,8 +355,10 @@
         }
     }
 
+    /**
+     * Realiza a rotação da "roda" interna (Vetor interno)
+     */
     function rotation(char1, char2) {
-        /* Realiza a rotação da "roda" interna */
         let ascii1 = char1.charCodeAt(0);
         let ascii2 = char2.charCodeAt(0);
         let diff = ascii1 - ascii2;
@@ -359,10 +383,9 @@
         onShuffle(inputResultD);
     }
 
-    function onShuffleE() {
-        onShuffle(inputResultE);
-    }
-
+    /**
+     * Embaralha palavras de uma frase (string)
+     */
     function onShuffle(inputResult) {
         let message = inputResult.value;
         console.log("onShuffle message: " + message);
@@ -405,6 +428,22 @@
         }
 
         inputResult.value = stringResultShuffled;
+    }
+
+    /**
+     * Realiza a validação dos campos necessários para decodificar/codificar
+     */
+    function verification(index, keyword, message, valid) {
+        if (index == "") {
+            alert("Index is required!");
+            valid = 0;
+        } else if (keyword == "") {
+            alert("Keyword is required!");
+            valid = 0;
+        } /* else if (message == "") {
+            alert("Message is required!");
+            valid = 0;
+        } */
     }
 
     function onInputIndex() {
