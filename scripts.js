@@ -38,12 +38,12 @@ function onEncode() {
     let index = inputIndexE.value.toUpperCase();
     let keyword = inputKeywordE.value.toUpperCase();
 
-    let valid = 1;
-    verification(index, keyword, message, valid);
+    let valid = verification(index, keyword, message);
     if (!valid) {
+        inputResultE.value = "";
         return;
     }
-
+   
     let arrayMessage = [];
     let arrayKeyword = [];
 
@@ -100,9 +100,9 @@ function onDecode() {
     let keyword = inputKeywordD.value.toUpperCase();
     let index = inputIndexD.value.toUpperCase();
 
-    let valid = 1;
-    verification(index, keyword, message, valid);
+    let valid = verification(index, keyword, message);
     if (!valid) {
+        inputResultD.value = "";
         return;
     }
 
@@ -249,17 +249,16 @@ function onShuffle(inputResult) {
 /**
  * Realiza a validação dos campos necessários para decodificar/codificar
  */
-function verification(index, keyword, message, valid) {
+function verification(index, keyword, message) {
     if (index == "") {
         alert("Index is required!");
-        valid = 0;
+        return 0;
+        
     } else if (keyword == "") {
         alert("Keyword is required!");
-        valid = 0;
-    } /* else if (message == "") {
-        alert("Message is required!");
-        valid = 0;
-    } */
+        return 0;  
+    } 
+    return 1;
 }
 
 function onInputIndex() {
