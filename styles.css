@@ -15,11 +15,25 @@ body {
     justify-content: center;    
 }
 
-#author {
+#div-bottom {
     width: 100%;
     margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#author {
+    width: 100%;
     color: rgba(0, 0, 0, 0.377);
     text-align: center;
+}
+
+#div-bottom a {
+    color: white;
+    text-align: center;
+    width: 100%;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .main-div {
